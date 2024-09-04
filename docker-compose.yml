@@ -1,0 +1,33 @@
+services:
+  quizzo-mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+
+  quizzo-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    depends_on:
+      - quizzo-mongo
+    environment:
+      - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@quizzo-mongo:27017/quizzo?authSource=admin
+
+  quizzo-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3033:3033"
+    depends_on:
+      - quizzo-backend
+
+volumes:
+  mongodb_data:
