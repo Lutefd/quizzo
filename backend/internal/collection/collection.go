@@ -11,4 +11,5 @@ type QuizzesCollection interface {
 	GetQuizById(id primitive.ObjectID) (*model.Quiz, error)
 	UpdateQuiz(quiz model.Quiz) error
 	DeleteQuiz(id primitive.ObjectID) error
+	Close() error
 }
