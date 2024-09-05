@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	dbName         = "quizzo"
 	collectionName = "quizzes"
 )
 
@@ -22,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	mongoURI := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=admin", cfg.MongoUser, cfg.MongoPassword, cfg.MongoHost, cfg.MongoPort, dbName)
+	mongoURI := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=admin", cfg.MongoUser, cfg.MongoPassword, cfg.MongoHost, cfg.MongoPort, cfg.MongoDBName)
 	clientOptions := options.Client().ApplyURI(mongoURI)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
@@ -35,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db := client.Database(dbName)
+	db := client.Database(cfg.MongoDBName)
 
 	collections, err := db.ListCollectionNames(context.Background(), bson.M{"name": collectionName})
 	if err != nil {
@@ -47,9 +46,9 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to create collection: %v", err)
 		}
-		fmt.Printf("Created '%s' collection in '%s' database\n", collectionName, dbName)
+		fmt.Printf("Created '%s' collection in '%s' database\n", collectionName, cfg.MongoDBName)
 	}
 
 	fmt.Printf("Successfully connected to MongoDB\n")
-	fmt.Printf("Database '%s' and collection '%s' are ready for use!\n", dbName, collectionName)
+	fmt.Printf("Database '%s' and collection '%s' are ready for use!\n", cfg.MongoDBName, collectionName)
 }
